@@ -45,7 +45,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //  };
 
 app.use(cors({
-  origin:"https://reservify-frontend-dy64nq5dk-harsh-sharmas-projects.vercel.app/",
+  origin:"https://reservify-frontend.vercel.app/",
   methods: ["GET" , "POST" , "PUT" , "DELETE"],
 }));
 
