@@ -17,6 +17,8 @@ import GetReserve from './Controllers/GetReserve.js'
 import Payment from './Controllers/StripePayment.js'
 import BookingCookie from './Controllers/BookingCookie.js'
 import YourBookings from './Controllers/YourBooking.js'
+
+
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -28,26 +30,23 @@ app.use(express.json({
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// const allowedOrigins = ["http://localhost:5173"];
-//     const corsOptions = {
-//     origin: function (origin, callback) {
-//    if (allowedOrigins.indexOf(origin) !== -1) {
-//   callback(null, true);
-//     } else {
-//      var msg =
-//     "The CORS policy for this site does not " +
-//     "allow access from the specified Origin.";
-//      callback(new Error(msg), false);
-//    }
-//  },
-// optionsSuccessStatus: 200,
-//  credentials: true,
-//  };
+const allowedOrigins = ["http://localhost:5173"];
+    const corsOptions = {
+    origin: function (origin, callback) {
+   if (allowedOrigins.indexOf(origin) !== -1) {
+  callback(null, true);
+    } else {
+     var msg =
+    "The CORS policy for this site does not " +
+    "allow access from the specified Origin.";
+     callback(new Error(msg), false);
+   }
+ },
+optionsSuccessStatus: 200,
+ credentials: true,
+ };
 
-app.use(cors({
-  origin:"http://localhost:5173",
-  methods: ["GET" , "POST" , "PUT" , "DELETE"],
-}));
+app.use(cors(corsOptions));
 
 
 //Mongoose Connection
