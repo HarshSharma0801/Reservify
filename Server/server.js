@@ -43,7 +43,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // optionsSuccessStatus: 200,
 //  credentials: true,
 //  };
-app.use(cors());
+
+app.use(cors({
+  origin:"https://reservify-frontend-dy64nq5dk-harsh-sharmas-projects.vercel.app/",
+  methods: ["GET" , "POST" , "PUT" , "DELETE"],
+}));
 
 
 //Mongoose Connection
