@@ -28,7 +28,7 @@ app.use(express.json({
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = ["https://reservify-frontend.vercel.app/"];
     const corsOptions = {
     origin: function (origin, callback) {
    if (allowedOrigins.indexOf(origin) !== -1) {
