@@ -4,6 +4,7 @@ import LogoFile from "../Header/Logo/logo";
 import { useNavigate } from "react-router";
 import Loader from "../Preloader/loader";
 import UserAccount from "../Header/UserAccount/AccountUser";
+import { Link } from "react-router-dom";
 const YourReserve = () => {
   const navigate = useNavigate();
   const [Data, SetData] = useState([]);
@@ -56,7 +57,10 @@ const YourReserve = () => {
           <LogoFile />
         </div>
         <div>
+          <Link to={'/account'}>
           <UserAccount />
+
+          </Link>
         </div>
       </div>
       <div className="flex justify-center text-center">

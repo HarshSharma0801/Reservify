@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import LogoFile from "../../Header/Logo/logo";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate,  } from "react-router";
 import Datepicker from "react-tailwindcss-datepicker";
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import { loadStripe } from "@stripe/stripe-js";
 import Loader from "../../Preloader/loader";
 import User from "../../../ContextApi/User/UserContext";
 import UserAccount from "../../Header/UserAccount/AccountUser";
-import BookingData from "../../../ContextApi/Booking/BookingContext";
+import { Link } from "react-router-dom";
 
 const ReservePage = () => {
   const { UserDataCtx, hasData } = useContext(User);
@@ -208,7 +208,10 @@ const ReservePage = () => {
           <LogoFile />
         </div>
         <div>
+        <Link to={'/account'}>
           <UserAccount />
+
+          </Link>
         </div>
       </div>
       <div className="md:m-12 m-4 pt-4 bg-gray-200 p-2 rounded-lg shadow-lg">

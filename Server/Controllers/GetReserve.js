@@ -17,7 +17,8 @@ GetReserve.get('/Reserve/:id' , async(req,res)=>{
 GetReserve.post('/Reserve/Provider' , async(req,res)=>{
     try {
         const id = req.body.id;
-        res.status(200).json(await User.findById(id));
+        const user = await User.findById(id);
+        res.status(200).json(user);
     } catch (error) {
         console.error(error);
     }
