@@ -13,8 +13,9 @@ import Success from "./Components/Pages/SingleReserve/success"
 import YourBooking from "./Components/YourBooking/YourBooking"
 
 axios.defaults.baseURL = 'http://localhost:5000';
-
-axios.defaults.withCredentials = true;
+axios.defaults.headers.post['Content-Type'] ='application/json;charset=utf-8';
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+axios.defaults.withCredentials = false;
 
 function App() {
 
