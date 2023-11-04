@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const allowedOrigins = ["*"];
+const allowedOrigins = ["http://localhost:5173"];
     const corsOptions = {
     origin: function (origin, callback) {
    if (allowedOrigins.indexOf(origin) !== -1) {
@@ -45,8 +45,8 @@ const allowedOrigins = ["*"];
 optionsSuccessStatus: 200,
  credentials: true,
  };
-app.use(cors(corsOptions));
-
+//app.use(cors(corsOptions));
+app.use(cors({credentials : true, origin: 'http://localhost:5173', }))
 
 //Mongoose Connection
 mongoose.connect(process.env.Mongo_ConnectionString, {
