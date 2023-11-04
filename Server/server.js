@@ -30,8 +30,22 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-
-app.use(cors());
+const allowedOrigins = ["http://localhost:5173"];
+    const corsOptions = {
+    origin: function (origin, callback) {
+   if (allowedOrigins.indexOf(origin) !== -1) {
+  callback(null, true);
+    } else {
+     var msg =
+    "The CORS policy for this site does not " +
+    "allow access from the specified Origin.";
+     callback(new Error(msg), false);
+   }
+ },
+optionsSuccessStatus: 200,
+ credentials: true,
+ };
+app.use(cors(corsOptions));
 
 
 //Mongoose Connection
