@@ -46,7 +46,7 @@ optionsSuccessStatus: 200,
  credentials: true,
  };
 //app.use(cors(corsOptions));
-app.use(cors({credentials : true, origin: 'https://reservify-o0b2.onrender.com', }))
+app.use(cors({credentials : true, origin: 'https://reservify.vercel.app/', }))
 
 //Mongoose Connection
 mongoose.connect(process.env.Mongo_ConnectionString, {
