@@ -17,7 +17,11 @@ LoginHandler.post("/login" , async(req,res)=>{
       
             jwt.sign({id:Userdata._id , email: Userdata.email}, jwtKey , { expiresIn: '24h'} , (err,token)=>{
                 if(err) throw err;
-                res.cookie('Jwttoken', token).json({valid:"success" , UserInfo:Userdata});
+                res.cookie('Jwttoken', token ,{ //send refresh token to client after log in
+                    httpOnly: true,
+                    maxAge: 24 * 60 * 60 * 1000, //1 day
+                    secure: true ,
+                    sameSite:'none'}).json({valid:"success" , UserInfo:Userdata});
                
                 console.log("valid")
 
