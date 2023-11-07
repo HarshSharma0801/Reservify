@@ -46,7 +46,7 @@ optionsSuccessStatus: 200,
  credentials: true,
  };
 //app.use(cors(corsOptions));
-app.use(cors({credentials : true, origin: 'https://reservify-git-main-harsh-sharmas-projects.vercel.app/', }))
+app.use(cors({credentials : true, origin: '', }))
 
 //Mongoose Connection
 mongoose.connect(process.env.Mongo_ConnectionString, {
