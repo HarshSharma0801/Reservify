@@ -46,7 +46,7 @@ optionsSuccessStatus: 200,
  credentials: true,
  };
 //app.use(cors(corsOptions));
-app.use(cors({credentials : true, origin: 'http://localhost:5173', }))
+app.use(cors({credentials : true, origin: 'https://reservify-o0b2.onrender.com', }))
 
 //Mongoose Connection
 mongoose.connect(process.env.Mongo_ConnectionString, {
