@@ -46,7 +46,7 @@ optionsSuccessStatus: 200,
  credentials: true,
  };
 //app.use(cors(corsOptions));
-app.use(cors({credentials : true, origin: 'https://654ab8e5077e342c8bececc2--stalwart-crisp-efed73.netlify.app/', }))
+app.use(cors({credentials : true, origin: 'http://localhost:10000/', }))
 
 //Mongoose Connection
 mongoose.connect(process.env.Mongo_ConnectionString, {
