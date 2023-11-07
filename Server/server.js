@@ -46,7 +46,7 @@ optionsSuccessStatus: 200,
  credentials: true,
  };
 //app.use(cors(corsOptions));
-app.use(cors({credentials : true, origin: '', }))
+app.use(cors({credentials : true, origin: 'https://reservify-life.onrender.com', }))
 
 //Mongoose Connection
 mongoose.connect(process.env.Mongo_ConnectionString, {
