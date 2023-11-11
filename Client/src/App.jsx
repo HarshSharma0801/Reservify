@@ -14,7 +14,7 @@ import YourBooking from "./Components/YourBooking/YourBooking"
 
 axios.defaults.baseURL = 'http://localhost:5000';
 
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 
 function App() {
 
