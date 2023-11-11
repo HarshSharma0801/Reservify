@@ -1,67 +1,58 @@
-import express from 'express'
-import User from '../Modals/Users.js';
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import express from "express";
+import User from "../Modals/Users.js";
+import jwt from "jsonwebtoken";
 
-const jwtKey  = process.env.JWTCONSTANT;
-
+const accessKey = process.env.ACCESS;
+const refreshKey = process.env.REFRESH;
 
 const LoginHandler = express();
 
-LoginHandler.post("/login" , async(req,res)=>{
+const authenticateToken = (req, res, next) => {
+  const  authHeader= req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-   const {email,password} = req.body;
-   try {
-    const Userdata = await User.findOne({email:email , password:password});
-    if(Userdata){
-      
-            jwt.sign({id:Userdata._id , email: Userdata.email}, jwtKey , { expiresIn: '24h'} , (err,token)=>{
-                if(err) throw err;
-                res.cookie('Jwttoken', token ,{ //send refresh token to client after log in
-                    httpOnly: true,
-                    maxAge: 24 * 60 * 60 * 1000, //1 day
-                    secure: true ,
-                    sameSite:'none'}).json({valid:"success" , UserInfo:Userdata});
-               
-                console.log("valid")
+  
 
-           })}
-        
-        else{
-            console.log("password not valid");
-            res.status(200).json("not valid");
-        }
-    
-   } catch (error) {
+  if (!token) {
+    return res.sendStatus(401); // Unauthorized
+  }
+
+  jwt.verify(token, accessKey, (err, user) => {
+    if (err) {
+      return res.sendStatus(403); // Forbidden
+    }
+    req.user = user;
+    next();
+  });
+};
+ 
+LoginHandler.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const Userdata = await User.findOne({ email: email, password: password });
+
+    if (Userdata) {
+      const accessToken = jwt.sign({Userdata}, accessKey, { expiresIn: "15m" });
+      const refreshToken = jwt.sign({Userdata}, refreshKey);
+
+      res.json({ access: accessToken, refresh: refreshToken  , UserInfo:Userdata , valid:"success"});
+
+    } else {
+      console.log("password not valid");
+      res.status(200).json("not valid");
+    }
+  } catch (error) {
     console.log(error);
-   }
+  }
+});
 
-})
+LoginHandler.get("/Token",authenticateToken ,(req, res) => {
+   const TokenData = req.user;
+  res.status(200).json(TokenData);
+});
 
+LoginHandler.post("/logout", (req, res) => {
+  res.status(200).cookie("Jwttoken", "").json("Sign Out");
+});
 
-LoginHandler.get('/CookieToken' , (req,res)=>{
-
-    const {Jwttoken} = req.cookies;
-    if(Jwttoken){
-        jwt.verify(Jwttoken , jwtKey , { expiresIn: '24h'} , async(err, data)=>{
-         if(err) throw err
-         const TokenData = await User.findById(data.id)
-         res.status(200).json(TokenData);
-        })
-    }
-    else{
-        res.status(200).json(null);
-    }
-})
-
-
-
-
-LoginHandler.post('/logout' , (req,res)=>{
-    res.status(200).cookie('Jwttoken', '').json("Sign Out");
-})
-
-
-
-
-export default LoginHandler
+export default LoginHandler;

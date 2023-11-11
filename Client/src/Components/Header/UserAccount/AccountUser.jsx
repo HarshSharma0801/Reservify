@@ -1,14 +1,21 @@
-import React , {useContext} from "react";
+import React , {useContext, useEffect, useState} from "react";
 import User from '../../../ContextApi/User/UserContext'
 
 const UserAccount = () => {
-
-  const {UserDataCtx} = useContext(User);
-
+  const {UserDataCtx , SetHasData} = useContext(User);
+  SetHasData(true);
   const UserName = UserDataCtx && UserDataCtx.name ; 
 
+
+  
+
+  
+
+
   return (
-    <div className="flex justify-between sm:gap-2 border border-gray-300 sm:p-3 rounded-2xl shadow-md shadow-gray-300 px-2">
+   
+    <>
+        <div className="flex justify-between sm:gap-2 border border-gray-300 sm:p-3 rounded-2xl shadow-md shadow-gray-300 px-2">
       <div className="cursor-pointer">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -43,8 +50,11 @@ const UserAccount = () => {
         </svg>
       </button>
 
-      <h1 className="text-[0.8rem] sm:text-[15px] sm:block  hidden">{UserName}</h1>
+      <h1 className="text-[0.8rem] sm:text-[15px] sm:block  hidden">{UserName}
+</h1>
     </div>
+    </>
+
   );
 };
 export default UserAccount;

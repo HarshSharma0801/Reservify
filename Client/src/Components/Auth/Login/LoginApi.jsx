@@ -4,12 +4,18 @@ const Logged = async (data, navigate , logininfo) => {
 
   try {
     await axios.post("/login", data).then((res) => {
-      console.log(res);
 
 
-      const User = res.data.UserInfo;
-      console.log(User);
-      logininfo(User) ;
+      const main = res.data;
+      let token = main.access;
+      localStorage.setItem("accessToken" , token)
+
+     
+      
+      
+
+ 
+      logininfo(main) ;
 
 
 

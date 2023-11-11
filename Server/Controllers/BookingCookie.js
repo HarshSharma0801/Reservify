@@ -1,63 +1,70 @@
-import express from 'express'
-import jwt from 'jsonwebtoken'
-import Booking from '../Modals/Booking.js';
+import express from "express";
+import jwt from "jsonwebtoken";
+import Booking from "../Modals/Booking.js";
 
-const jwtKey  = process.env.JWTCONSTANT;
-
+const Key = process.env.REFRESH;
+const accessKey = process.env.ACCESS;
 
 const BookingCookie = express();
 
+const authenticateToken = (req, res, next) => {
+    console.log(req.headers);
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-BookingCookie.post('/Booking' , async(req,res)=>{
+  if (!token) {
+    return res.sendStatus(401); // Unauthorized
+  }
 
-
-    const data = req.body;
-    try {
-        
-      jwt.sign(data, jwtKey , { expiresIn: '600s'} , (err,token)=>{
-        if(err) throw err;
-        res.cookie('BookingJwt', token).json({msg:"cookie"});
-       
-      })
-
-    } catch (error) {
-        
+  jwt.verify(token, accessKey, (err, user) => {
+    if (err) {
+      return res.sendStatus(403); // Forbidden
     }
+    req.customer = user;
+    next();
+  });
+};
 
-})
+const authenticateUser = (req, res, next) => {
+  const token = req.headers["main"];
 
+  if (!token) {
+    return res.sendStatus(401); // Unauthorized
+  }
 
-BookingCookie.get('/BookingData' , async(req,res)=>{
-
-    const {BookingJwt , Jwttoken} = req.cookies;
-
-    if(Jwttoken){
-        jwt.verify(Jwttoken , jwtKey , { expiresIn: '24h'} , async(err, Provider)=>{
-         if(err) throw err
-         const id = Provider.id ;
-         if(BookingJwt){
-            jwt.verify(BookingJwt , jwtKey , { expiresIn: '600s'} , async(err, data)=>{
-             if(err) throw err
-             const today = new Date();
-             const date = today.getDate()+'/'+(today.getMonth()+1) + '/'+today.getFullYear();
-             const main = {...data , Customer:id , Date:date}
-             
-             await Booking.insertMany(main); 
-             res.status(200).json({data:"SUCCESS"});
-            })
-            
-            console.log("Api Call");
-        }
-        })
+  jwt.verify(token, Key, (err, user) => {
+    if (err) {
+      return res.sendStatus(403); // Forbidden
     }
-    
-    else{
-        res.status(200).send("no data");
-    }
-})
+    req.user = user;
+    next();
+  });
+};
 
+BookingCookie.post("/Booking", async (req, res) => {
+  const data = req.body;
+  try {
+    const BookingToken = jwt.sign({ data }, Key, { expiresIn: "2m" });
+    res.json({ BookingToken: BookingToken, msg: "cookie" });
+  } catch (error) {}
+});
 
+BookingCookie.get(
+  "/BookingData",
+  authenticateToken,authenticateUser,
+  async (req, res) => {
+    const BookingData = req.user.data;
+   const id = req.customer.Userdata._id
+      const today = new Date();
+      const date =
+        today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
+      const main = { ...BookingData, Customer: id, Date: date };
 
+      await Booking.insertMany(main);
+    res.status(200).json({ data: "SUCCESS" });
 
+    console.log("Api Call");
+  }
+);
 
-export default BookingCookie
+export default BookingCookie;

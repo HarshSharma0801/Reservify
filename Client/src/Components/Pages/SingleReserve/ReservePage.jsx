@@ -132,6 +132,8 @@ const ReservePage = () => {
       if (res.data.msg == "cookie") {
         SetisValid(true);
       }
+      let booking = res.data.BookingToken;
+      localStorage.setItem("BookingToken" , booking)
     });
   }, [BookingDetails]);
 

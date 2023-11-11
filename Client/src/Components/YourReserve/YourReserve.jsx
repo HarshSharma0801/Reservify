@@ -10,10 +10,18 @@ const YourReserve = () => {
   const [Data, SetData] = useState([]);
   const [Id, SetId] = useState();
   const [isLoading, SetisLoading] = useState(false);
-
+  const token  = localStorage.getItem("accessToken");
+  const headers = {
+      'Authorization': `Bearer ${token}`,
+      // Add other headers as needed
+    };
+    const config = {
+      headers: headers
+    };
   useEffect(() => {
     SetisLoading(true);
-    axios.get("/getYourReserve").then((res) => {
+
+    axios.get("/getYourReserve" , config).then((res) => {
       SetData(res.data);
     });
   }, []);

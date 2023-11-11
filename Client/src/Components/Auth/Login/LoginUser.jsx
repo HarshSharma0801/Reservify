@@ -14,7 +14,7 @@ function Login() {
   }
 
   const NavigateRoute = ()=>{
-    Navigate('/');
+    Navigate('/' );
   }
   const [UserData , SetUserData] = useState({
     email:'',

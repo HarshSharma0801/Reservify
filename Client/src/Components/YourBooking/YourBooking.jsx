@@ -10,7 +10,15 @@ const YourBooking =()=>{
 
     useEffect(() => {
         SetisLoading(true);
-        axios.get("/getYourBookings").then((res) => {
+        const token  = localStorage.getItem("accessToken");
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            // Add other headers as needed
+          };
+          const config = {
+            headers: headers
+          };
+        axios.get("/getYourBookings" , config).then((res) => {
           SetData(res.data);
         });
       }, []);
@@ -39,7 +47,7 @@ return(
 {Data.length > 0 &&
   Data.map((Reserve) => {
     return (
-      <div className="  md:w-[351px] md:h-[418px] w-[300px] h-[368px] m-auto bg-white border border-gray-300 rounded-lg  shadow-2xl dark:bg-gray-800 dark:border-gray-700">
+      <div className="  md:w-[351px] md:h-[418px] w-[280px] h-[408px]  m-auto bg-white border border-gray-300 rounded-lg  shadow-2xl dark:bg-gray-800 dark:border-gray-700">
         <div className="bg-gray-200 aspect-video	 rounded-lg overflow-hidden">
           <img
             src={Reserve.photo}

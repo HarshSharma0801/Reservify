@@ -2,23 +2,36 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import { Reserve } from '../Modals/Reserve.js';
 
-const jwtKey  = process.env.JWTCONSTANT;
+const accessKey = process.env.ACCESS;
 
 const YourReserves = express();
 
-YourReserves.get('/getYourReserve' , async(req,res)=>{
+const authenticateToken = (req, res, next) => {
+    const  authHeader= req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+  
+    
+  
+    if (!token) {
+      return res.sendStatus(401); // Unauthorized
+    }
+  
+    jwt.verify(token, accessKey, (err, user) => {
+      if (err) {
+        return res.sendStatus(403); // Forbidden
+      }
+      req.user = user;
+      next();
+    });
+  };
+
+YourReserves.get('/getYourReserve', authenticateToken , async(req,res)=>{
   
 try {
-    const {Jwttoken} = req.cookies;
-
-   
-    
-    
-
-    jwt.verify(Jwttoken , jwtKey , { expiresIn: '24h'} , async(err, userdata)=>{
-        if(err) throw err
-       const id = userdata.id;
-       if(userdata.email=='admin@admin'){
+        
+    const TokenData = req.user.Userdata;
+    const id = TokenData._id;
+       if(TokenData.email=='admin@admin'){
         res.status(200).json(await Reserve.find({}));
 
        }
@@ -26,8 +39,7 @@ try {
         res.status(200).json(await Reserve.find({Provider:id}));
 
        }
-       })
-  
+
 
 } catch (error) {
     console.log(error)

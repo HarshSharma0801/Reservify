@@ -4,9 +4,13 @@ import Loader from "../../../../Preloader/loader";
 import { Typewriter } from "react-simple-typewriter";
 
 const Display = (props) => {
+  
+
+
   return (
     <>
       {props.isLoading ? <Loader /> : ""}
+
       <div className="p-7 text-2xl font-bold flex-1 h-screen">
         <div>
           <h1 className="text-2xl md:text-4xl flex flex-start px-5 text-center text-primary">

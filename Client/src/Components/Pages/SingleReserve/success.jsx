@@ -10,7 +10,20 @@ const Success = () => {
   const [BookingData , SetBookingData] = useState();
 
   useEffect(()=>{
-        axios.get('/BookingData').then((res)=>{
+    
+    const token  = localStorage.getItem("BookingToken");
+    const Roken  = localStorage.getItem("accessToken");
+
+    const headers = {
+      'Authorization': `Bearer ${Roken}`,
+        'main': token,
+
+      };
+      const config = {
+        headers: headers
+      };
+      
+        axios.get('/BookingData' , config).then((res)=>{
           SetBookingData(res.data.data)
        
         });
