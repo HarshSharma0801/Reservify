@@ -33,7 +33,7 @@
               
             mode: 'payment',
 
-            success_url:`http://reservify.vercel.app/`,
+            success_url:`http://reservify.vercel.app/success`,
             cancel_url: `http://localhost:5173/account`,
           });
         res.status(200).json({id:session.id , Details:Bookingdetails});
