@@ -2,9 +2,14 @@
 
 Reservify is an Ultimate Fullstack Web App for Booking or Hosting Accommodations and Restaurants . You can book your reserve , make your own reserve and even can have admin powers and can Perform CRUD operations . 
 
-# Screeshots
+## Screeshots
 
-![App Screenshot](file:///C:/Users/dell/OneDrive/Pictures/Screenshots/Screenshot%20(31).png)
+![Screenshot (31)](https://github.com/HarshSharma0801/Reservify/assets/121893196/935c71f2-0a46-4098-aad2-f80986a9daa6)
+
+![Screenshot (23)](https://github.com/HarshSharma0801/Reservify/assets/121893196/c8034d29-9bed-463c-a426-3a31c677e344)
+
+
+
 
 
 ## Key Features 
