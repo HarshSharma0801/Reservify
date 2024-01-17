@@ -12,7 +12,7 @@ import ReservePage from "./Components/Pages/SingleReserve/ReservePage"
 import Success from "./Components/Pages/SingleReserve/success"
 import YourBooking from "./Components/YourBooking/YourBooking"
 
-axios.defaults.baseURL = 'https://reservify-backendtoken.onrender.com';
+axios.defaults.baseURL = 'https://reservify-backend.vercel.app/';
 // axios.defaults.baseURL = 'http://localhost:5000/';
 
 // axios.defaults.withCredentials = true;
