@@ -30,6 +30,11 @@
                     quantity:1
                 }
             ],
+           billing_address_collection: 'required', // Require billing address
+            shipping_address_collection: {
+                allowed_countries: ['IN'], // List of allowed countries
+            },
+            mode: 'payment',
               
             mode: 'payment',
 
