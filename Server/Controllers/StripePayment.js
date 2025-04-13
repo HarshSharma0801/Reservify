@@ -13,7 +13,8 @@
  
     const product = req.body.Pay;
     const Bookingdetails = req.body.Book;
-   
+   const cookies = req.cookies;
+   console.log(cookies , "cookies aree here")
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types:["card"],

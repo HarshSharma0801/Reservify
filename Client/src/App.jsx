@@ -13,9 +13,9 @@ import Success from "./Components/Pages/SingleReserve/success"
 import YourBooking from "./Components/YourBooking/YourBooking"
 
 axios.defaults.baseURL = 'https://reservify-backend.vercel.app';
-// axios.defaults.baseURL = 'http://localhost:5000/';
+// axios.defaults.baseURL = 'http://localhost:5005';
 
-// axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
 
 function App() {
 

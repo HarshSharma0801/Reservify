@@ -2,7 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import Booking from "../Modals/Booking.js";
 import axios from "axios";
-
+import { randomUUID } from "crypto";
 const Key = process.env.REFRESH;
 const accessKey = process.env.ACCESS;
 
@@ -59,6 +59,7 @@ BookingCookie.get(
   async (req, res) => {
     const BookingData = req.user.data;
     const cookies = req.cookies;
+    console.log(cookies , "coookiiesss")
     const promoTrackingSession = cookies.hanami_tracking_session;
 
     const id = req.customer.Userdata._id;
@@ -75,10 +76,11 @@ BookingCookie.get(
 
     let conversionData = null;
 
+    console.log(promoTrackingSession , "cookieeeeeeeee")
     let conversions = [];
     if (promoTrackingSession) {
       conversionData = {
-        session_id: JSON.parse(promoTrackingSession).session_id,
+        session_id: randomUUID(),
         trackers: JSON.parse(promoTrackingSession).trackers,
         amount: BookingData.amount,
         currency: "USD",
