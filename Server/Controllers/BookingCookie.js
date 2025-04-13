@@ -59,7 +59,7 @@ BookingCookie.get(
   async (req, res) => {
     const BookingData = req.user.data;
     const cookies = req.cookies;
-    const promoTrackingSession = cookies.promo_tracking_session;
+    const promoTrackingSession = cookies.hanami_tracking_session;
 
     const id = req.customer.Userdata._id;
     const today = new Date();
