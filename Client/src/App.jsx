@@ -21,6 +21,9 @@ function App() {
 
   console.log("window")
 
+
+  axios.get("/set-test-cookie").then((res) => console.log(res)).catch((err) => console.log(err));
+
   return (
     <>
         <Routes>

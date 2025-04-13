@@ -22,7 +22,6 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-//Some Boiler Plate
 app.use(
   express.json({
     limit: "50mb",
@@ -32,46 +31,36 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// const allowedOrigins = ["http://localhost:5173"];
-//     const corsOptions = {
-//     origin: function (origin, callback) {
-//    if (allowedOrigins.indexOf(origin) !== -1) {
-//   callback(null, true);
-//     } else {
-//      var msg =
-//     "The CORS policy for this site does not " +
-//     "allow access from the specified Origin.";
-//      callback(new Error(msg), false);
-//    }
-//  },
-// optionsSuccessStatus: 200,
-//  credentials: true,
-//  };
-//app.use(cors(corsOptions));
-
+// CORS configuration
 app.use(
   cors({
-    origin: `${process.env.FRONTEND_API_URL}`, // Allow frontend
-    credentials: true, // Allow cookies
+    origin: process.env.FRONTEND_API_URL,
+    credentials: true,
   })
 );
 
-//Mongoose Connection
+// Mongoose Connection
 mongoose.connect(process.env.Mongo_ConnectionString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 const db = mongoose.connection;
-db.on("error", function () {
-  console.log("Error Connecting");
+db.on("error", () => console.log("Error Connecting"));
+db.on("open", () => console.log("Successfully Connected to Database"));
+
+// Test cookie route
+app.get("/set-test-cookie", (req, res) => {
+  res.cookie("testCookie", "testValue", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  res.json({ message: "Cookie set" });
 });
 
-db.on("open", function () {
-  console.log("Successfull Connected to Database ");
-});
-
-//Routes
+// Routes
 app.use(RegisterHandler);
 app.use(LoginHandler);
 app.use(photos);
@@ -86,7 +75,7 @@ app.use(Payment);
 app.use(BookingCookie);
 app.use(YourBookings);
 
-//PORT
+// Start server
 app.listen(PORT, () => {
   console.log(`Server is running well at ${PORT}`);
 });
