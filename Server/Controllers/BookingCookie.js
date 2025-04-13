@@ -59,7 +59,7 @@ BookingCookie.get(
   async (req, res) => {
     const BookingData = req.user.data;
     const cookies = req.cookies;
-    console.log(cookies , "coookiiesss")
+    console.log(cookies, "coookiiesss");
     const promoTrackingSession = cookies.hanami_tracking_session;
 
     const id = req.customer.Userdata._id;
@@ -76,7 +76,7 @@ BookingCookie.get(
 
     let conversionData = null;
 
-    console.log(promoTrackingSession , "cookieeeeeeeee")
+    console.log(promoTrackingSession, "cookieeeeeeeee");
     let conversions = [];
     if (promoTrackingSession) {
       conversionData = {
@@ -93,9 +93,10 @@ BookingCookie.get(
       console.log("Api Call", data.conversions);
       conversions = data.conversions;
       res.clearCookie("hanami_tracking_session", {
-        httpOnly: true,
-        sameSite: "None",
-        secure: Production,
+        path: "/", // Match SDK's path
+        sameSite: "None", // Match SDK's SameSite for HTTPS
+        secure: true, // Match SDK's Secure flag (always true for production)
+        domain: ".reservify.xyz", // Match domain for cross-subdomain access
       });
     }
 
