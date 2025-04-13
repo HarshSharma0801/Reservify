@@ -8,43 +8,183 @@
   </head>
   <body>
     <div id="root"></div>
-    <div id="status" style="display: none;"></div> <!-- Added status element -->
+    <div id="status" style="display: none;"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
-      function loadSDK() {
-        return new Promise((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = 'https://hanami-six.vercel.app/hanami-tracker.js';
-          script.async = true; // Ensure non-blocking load
-          script.onload = () => {
-            try {
-              if (window.HanamiTracker) {
-                window.HanamiTracker.init({ debug: true });
-                document.getElementById('status').textContent = 'SDK loaded successfully!';
-                resolve();
-              } else {
-                document.getElementById('status').textContent = 'SDK loaded but HanamiTracker object not found!';
-                reject(new Error('SDK loaded but HanamiTracker object not found'));
-              }
-            } catch (e) {
-              document.getElementById('status').textContent = 'SDK initialization error!';
-              console.error('SDK initialization error:', e);
-              reject(e);
-            }
-          };
-          script.onerror = () => {
-            document.getElementById('status').textContent = 'Failed to load SDK!';
-            console.error('Failed to load SDK from https://hanami-six.vercel.app/hanami-tracker.js');
-            reject(new Error('Failed to load SDK'));
-          };
-          document.head.appendChild(script);
-        });
-      }
+      /**
+       * HanamiTracker SDK
+       * Version 1.0.0
+       */
+      (function(window) {
+        'use strict';
 
-      // Call loadSDK immediately
-      loadSDK().catch(error => {
-        console.error('loadSDK failed:', error);
-      });
+        window.HanamiTracker = window.HanamiTracker || {};
+
+        const config = {
+          cookieName: 'hanami_tracking_session',
+          trackedParams: ['tracking_code', 'utm_source', 'utm_medium', 'click_id'],
+          debug: true,
+          cookieDays: 30
+        };
+
+        const utils = {
+          log: function(message, data) {
+            if (config.debug && console) {
+              console.log('HanamiTracker:', message, data || '');
+            }
+          },
+
+          getCookie: function(name) {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            if (match) {
+              try {
+                return JSON.parse(decodeURIComponent(match[2]));
+              } catch (e) {
+                utils.log('Error parsing cookie:', e);
+                console.error('Cookie parse error:', e);
+                return null;
+              }
+            }
+            return null;
+          },
+
+          setCookie: function(name, value, days) {
+            try {
+              const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+              const isHttps = window.location.protocol === 'https:';
+              let cookieString = `${name}=${encodeURIComponent(JSON.stringify(value))}; expires=${expires}; path=/`;
+
+              if (isHttps) {
+                cookieString += '; Secure; SameSite=Strict';
+              }
+
+              document.cookie = cookieString;
+              utils.log('Cookie set:', { name, value, isHttps });
+            } catch (e) {
+              utils.log('Error setting cookie:', e);
+              console.error('Failed to set cookie:', e);
+            }
+          },
+
+          getURLParams: function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const params = {};
+
+            for (const param of config.trackedParams) {
+              if (urlParams.has(param)) {
+                params[param] = urlParams.get(param);
+              }
+            }
+
+            return params;
+          }
+        };
+
+        const SDK = {
+          init: function(options = {}) {
+            Object.assign(config, options);
+            utils.log('SDK initialized with options', config);
+
+            const params = utils.getURLParams();
+            let sessionData = utils.getCookie(config.cookieName) ?? { trackers: [] };
+            utils.log('SessionData', sessionData);
+
+            if (params.click_id) {
+              console.log("session data below");
+              utils.log('bjbjb', sessionData);
+              console.log("session data here", sessionData);
+
+              this.clickId = params.click_id;
+
+              const newTracker = {
+                click_id: params.click_id,
+                tracking_code: params.tracking_code || null,
+                utm_source: params.utm_source || null,
+                utm_medium: params.utm_medium || null,
+                timestamp: new Date().toISOString()
+              };
+
+              const existingTrackerIndex = sessionData.trackers.findIndex(
+                tracker => tracker.click_id === params.click_id
+              );
+              if (existingTrackerIndex !== -1) {
+                sessionData.trackers[existingTrackerIndex] = {
+                  ...sessionData.trackers[existingTrackerIndex],
+                  ...newTracker
+                };
+                utils.log('Updated existing tracker', newTracker);
+              } else {
+                sessionData.trackers.push(newTracker);
+                utils.log('Added new tracker', newTracker);
+              }
+
+              if (sessionData.trackers.length > 10) {
+                sessionData.trackers.shift();
+                utils.log('Removed oldest tracker to maintain limit');
+              }
+
+              utils.setCookie(config.cookieName, sessionData, config.cookieDays);
+
+              if (typeof config.onTrack === 'function') {
+                config.onTrack(params);
+              }
+            } else {
+              if (sessionData && sessionData.trackers && sessionData.trackers.length > 0) {
+                const latestTracker = sessionData.trackers[sessionData.trackers.length - 1];
+                this.clickId = latestTracker.click_id;
+                utils.log('Found tracking data in cookie', latestTracker);
+
+                if (typeof config.onTrack === 'function') {
+                  config.onTrack(latestTracker);
+                }
+              }
+            }
+
+            return this;
+          },
+
+          getSessionData: function() {
+            return utils.getCookie(config.cookieName);
+          },
+
+          getClickId: function() {
+            return this.clickId || null;
+          },
+
+          getLastTracker: function() {
+            const sessionData = this.getSessionData();
+            if (sessionData && sessionData.trackers && sessionData.trackers.length > 0) {
+              return sessionData.trackers[sessionData.trackers.length - 1];
+            }
+            return null;
+          },
+
+          getAllTrackers: function() {
+            const sessionData = this.getSessionData();
+            if (sessionData && sessionData.trackers) {
+              return sessionData.trackers;
+            }
+            return [];
+          }
+        };
+
+        window.HanamiTracker = {
+          init: SDK.init.bind(SDK),
+          getClickId: SDK.getClickId.bind(SDK),
+          getSessionData: SDK.getSessionData.bind(SDK),
+          getLastTracker: SDK.getLastTracker.bind(SDK),
+          getAllTrackers: SDK.getAllTrackers.bind(SDK)
+        };
+
+        // Initialize immediately
+        try {
+          window.HanamiTracker.init({ debug: true });
+          document.getElementById('status').textContent = 'SDK loaded successfully!';
+        } catch (e) {
+          console.error('SDK initialization error:', e);
+          document.getElementById('status').textContent = 'SDK initialization error!';
+        }
+      })(window);
     </script>
   </body>
 </html>
