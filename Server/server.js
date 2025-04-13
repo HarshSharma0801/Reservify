@@ -51,13 +51,8 @@ db.on("open", () => console.log("Successfully Connected to Database"));
 
 // Test cookie route
 app.get("/set-test-cookie", (req, res) => {
-  res.cookie("testCookie", "testValue", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 24 * 60 * 60 * 1000,
-  });
-  res.json({ message: "Cookie set" });
+  const cookies = req.cookies;
+  res.json({ message: "Cookie set", cookies });
 });
 
 // Routes
