@@ -15,11 +15,17 @@
         return new Promise((resolve, reject) => {
           const script = document.createElement('script');
           script.src = 'https://hanami-six.vercel.app/hanami-tracker.js';
-          script.async = true; // Ensure non-blocking load
+          script.async = true;
           script.onload = () => {
             try {
               if (window.HanamiTracker) {
-                window.HanamiTracker.init({ debug: true });
+                window.HanamiTracker.init({
+                  debug: true,
+                  cookieDomain: '.vercel.app', // Share cookie with reservify-backend.vercel.app
+                  cookieDays: 30,
+                  maxTrackers: 10,
+                  trackedParams: ['tracking_code', 'utm_source', 'utm_medium', 'click_id'],
+                });
                 document.getElementById('status').textContent = 'SDK loaded successfully!';
                 resolve();
               } else {
@@ -40,7 +46,7 @@
           document.head.appendChild(script);
         });
       }
-
+    
       // Call loadSDK immediately
       loadSDK().catch(error => {
         console.error('loadSDK failed:', error);
