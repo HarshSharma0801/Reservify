@@ -8,7 +8,7 @@
   </head>
   <body>
     <div id="root"></div>
-    <div id="status" style="display: none;"></div> <!-- Added status element -->
+    <div id="status" style="display: none;"></div> 
     <script type="module" src="/src/main.jsx"></script>
     <script>
       function loadSDK() {
@@ -21,7 +21,7 @@
               if (window.HanamiTracker) {
                 window.HanamiTracker.init({
                   debug: true,
-                  cookieDomain: '.vercel.app', // Share cookie with reservify-backend.vercel.app
+                  cookieDomain: '.reservify.xyz', 
                   cookieDays: 30,
                   maxTrackers: 10,
                   trackedParams: ['tracking_code', 'utm_source', 'utm_medium', 'click_id'],
