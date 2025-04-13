@@ -51,7 +51,7 @@ db.on("open", () => console.log("Successfully Connected to Database"));
 
 // Test cookie route
 app.get("/set-test-cookie", (req, res) => {
-  const cookies = req.cookies;
+  const cookies = req.cookies.hanami_tracking_session;
   res.json({ message: "Cookie set", cookies });
 });
 
