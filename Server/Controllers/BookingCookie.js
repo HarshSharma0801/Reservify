@@ -94,7 +94,7 @@ BookingCookie.get(
       conversions = data.conversions;
       res.clearCookie("hanami_tracking_session", {
         httpOnly: true,
-        sameSite: "Lax",
+        sameSite: "None",
         secure: Production,
       });
     }
