@@ -1,34 +1,37 @@
-import 'dotenv/config'
-import express from 'express'
-import cors from 'cors'
-import mongoose from 'mongoose'
-import bodyParser from 'body-parser'
-import cookieParser from 'cookie-parser'
-import RegisterHandler from './Controllers/RegisterHandler.js'
-import LoginHandler from './Controllers/LoginHandler.js'
-import photos from './Controllers/Cloudinary.js'
-import AddReserve from './Controllers/AddReserve.js'
-import YourReserves from './Controllers/YourReserves.js'
-import Edit from './Controllers/EditReserve.js'
-import Update from './Controllers/UpdateReserve.js'
-import Delete from './Controllers/DeleteReserve.js'
-import AllReserves from './Controllers/Reserves.js'
-import GetReserve from './Controllers/GetReserve.js'
-import Payment from './Controllers/StripePayment.js'
-import BookingCookie from './Controllers/BookingCookie.js'
-import YourBookings from './Controllers/YourBooking.js'
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import RegisterHandler from "./Controllers/RegisterHandler.js";
+import LoginHandler from "./Controllers/LoginHandler.js";
+import photos from "./Controllers/Cloudinary.js";
+import AddReserve from "./Controllers/AddReserve.js";
+import YourReserves from "./Controllers/YourReserves.js";
+import Edit from "./Controllers/EditReserve.js";
+import Update from "./Controllers/UpdateReserve.js";
+import Delete from "./Controllers/DeleteReserve.js";
+import AllReserves from "./Controllers/Reserves.js";
+import GetReserve from "./Controllers/GetReserve.js";
+import Payment from "./Controllers/StripePayment.js";
+import BookingCookie from "./Controllers/BookingCookie.js";
+import YourBookings from "./Controllers/YourBooking.js";
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
 //Some Boiler Plate
-app.use(express.json({
-  limit: '50mb'
-}));
+app.use(
+  express.json({
+    limit: "50mb",
+  })
+);
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // const allowedOrigins = ["http://localhost:5173"];
 //     const corsOptions = {
@@ -47,7 +50,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //  };
 //app.use(cors(corsOptions));
 
-app.use(cors())
+app.use(
+  cors({
+    origin: `${process.env.FRONTEND_API_URL}`, // Allow frontend
+    credentials: true, // Allow cookies
+  })
+);
 
 //Mongoose Connection
 mongoose.connect(process.env.Mongo_ConnectionString, {
@@ -60,11 +68,9 @@ db.on("error", function () {
   console.log("Error Connecting");
 });
 
-
 db.on("open", function () {
   console.log("Successfull Connected to Database ");
 });
-
 
 //Routes
 app.use(RegisterHandler);
@@ -81,10 +87,7 @@ app.use(Payment);
 app.use(BookingCookie);
 app.use(YourBookings);
 
-
-
-
 //PORT
-app.listen(PORT , ()=>{
-    console.log(`Server is running well at ${PORT}`)
-})
+app.listen(PORT, () => {
+  console.log(`Server is running well at ${PORT}`);
+});

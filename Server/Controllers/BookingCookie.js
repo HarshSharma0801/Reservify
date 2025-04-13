@@ -1,14 +1,17 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import Booking from "../Modals/Booking.js";
+import axios from "axios";
 
 const Key = process.env.REFRESH;
 const accessKey = process.env.ACCESS;
 
+const Production = process.env.NODE_ENV === "production";
+
 const BookingCookie = express();
 
 const authenticateToken = (req, res, next) => {
-    console.log(req.headers);
+  console.log(req.headers);
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -51,19 +54,53 @@ BookingCookie.post("/Booking", async (req, res) => {
 
 BookingCookie.get(
   "/BookingData",
-  authenticateToken,authenticateUser,
+  authenticateToken,
+  authenticateUser,
   async (req, res) => {
     const BookingData = req.user.data;
-   const id = req.customer.Userdata._id
-      const today = new Date();
-      const date =
-        today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
-      const main = { ...BookingData, Customer: id, Date: date };
+    const cookies = req.cookies;
+    const promoTrackingSession = cookies.promo_tracking_session;
 
-      await Booking.insertMany(main);
-    res.status(200).json({ data: "SUCCESS" });
+    const id = req.customer.Userdata._id;
+    const today = new Date();
+    const date =
+      today.getDate() +
+      "/" +
+      (today.getMonth() + 1) +
+      "/" +
+      today.getFullYear();
+    const main = { ...BookingData, Customer: id, Date: date };
 
-    console.log("Api Call");
+    await Booking.insertMany(main);
+
+    let conversionData = null;
+
+    let conversions = [];
+    if (promoTrackingSession) {
+      conversionData = {
+        session_id: JSON.parse(promoTrackingSession).session_id,
+        trackers: JSON.parse(promoTrackingSession).trackers,
+        amount: BookingData.amount,
+        currency: "USD",
+      };
+      const { data } = await axios.post(
+        `${process.env.HANAMI_URL}/api/conversion`,
+        conversionData
+      );
+
+      console.log("Api Call", data.conversions);
+      conversions = data.conversions;
+      res.clearCookie("hanami_tracking_session", {
+        httpOnly: true,
+        sameSite: "Lax",
+        secure: Production,
+      });
+    }
+
+    res.status(200).json({
+      data: "SUCCESS",
+      conversions: conversions,
+    });
   }
 );
 

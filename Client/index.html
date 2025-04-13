@@ -9,5 +9,28 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+          function loadSDK() {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://hanami-six.vercel.app/hanami-tracker.js';
+        script.onload = () => {
+          if (window.HanamiTracker) {
+            window.HanamiTracker.init({ debug: true });
+            document.getElementById('status').textContent = 'SDK loaded successfully!';
+            resolve();
+          } else {
+            document.getElementById('status').textContent = 'SDK loaded but HanamiTracker object not found!';
+            reject('SDK loaded but HanamiTracker object not found');
+          }
+        };
+        script.onerror = () => {
+          document.getElementById('status').textContent = 'Failed to load SDK!';
+          reject('Failed to load SDK');
+        };
+        document.head.appendChild(script);
+      });
+    }
+    </script>
   </body>
 </html>
