@@ -8,29 +8,43 @@
   </head>
   <body>
     <div id="root"></div>
+    <div id="status" style="display: none;"></div> <!-- Added status element -->
     <script type="module" src="/src/main.jsx"></script>
     <script>
-          function loadSDK() {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://hanami-six.vercel.app/hanami-tracker.js';
-        script.onload = () => {
-          if (window.HanamiTracker) {
-            window.HanamiTracker.init({ debug: true });
-            document.getElementById('status').textContent = 'SDK loaded successfully!';
-            resolve();
-          } else {
-            document.getElementById('status').textContent = 'SDK loaded but HanamiTracker object not found!';
-            reject('SDK loaded but HanamiTracker object not found');
-          }
-        };
-        script.onerror = () => {
-          document.getElementById('status').textContent = 'Failed to load SDK!';
-          reject('Failed to load SDK');
-        };
-        document.head.appendChild(script);
+      function loadSDK() {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://hanami-six.vercel.app/hanami-tracker.js';
+          script.async = true; // Ensure non-blocking load
+          script.onload = () => {
+            try {
+              if (window.HanamiTracker) {
+                window.HanamiTracker.init({ debug: true });
+                document.getElementById('status').textContent = 'SDK loaded successfully!';
+                resolve();
+              } else {
+                document.getElementById('status').textContent = 'SDK loaded but HanamiTracker object not found!';
+                reject(new Error('SDK loaded but HanamiTracker object not found'));
+              }
+            } catch (e) {
+              document.getElementById('status').textContent = 'SDK initialization error!';
+              console.error('SDK initialization error:', e);
+              reject(e);
+            }
+          };
+          script.onerror = () => {
+            document.getElementById('status').textContent = 'Failed to load SDK!';
+            console.error('Failed to load SDK from https://hanami-six.vercel.app/hanami-tracker.js');
+            reject(new Error('Failed to load SDK'));
+          };
+          document.head.appendChild(script);
+        });
+      }
+
+      // Call loadSDK immediately
+      loadSDK().catch(error => {
+        console.error('loadSDK failed:', error);
       });
-    }
     </script>
   </body>
 </html>
