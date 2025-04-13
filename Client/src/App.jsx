@@ -19,6 +19,7 @@ axios.defaults.baseURL = 'https://reservify-backend.vercel.app';
 
 function App() {
 
+  console.log("window")
 
   return (
     <>
